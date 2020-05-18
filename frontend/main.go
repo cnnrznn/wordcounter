@@ -19,9 +19,7 @@ func handleIndex(w http.ResponseWriter, req *http.Request) {
 	}
 
 	log.Println(req.Method, req.URL.Path)
-
-	URL := req.FormValue("url")
-	log.Println(URL)
+	log.Println(req.URL.RawQuery)
 
 	// valid request
 	w.WriteHeader(http.StatusOK)
@@ -42,15 +40,15 @@ func handlePost(w http.ResponseWriter, req *http.Request) {
 
 	// parse url
 	URL := req.FormValue("url")
-	u, err := url.Parse("/")
-	if err != nil {
-
+	if URL == "" {
+		http.Error(w, "Bad form data", http.StatusBadRequest)
 	}
+	u, _ := url.Parse("/")
 	q := u.Query()
 	q.Set("url", URL)
 	u.RawQuery = q.Encode()
 
-	http.Redirect(w, req, u.RawQuery, http.StatusFound)
+	http.Redirect(w, req, u.String(), http.StatusFound)
 }
 
 func main() {
@@ -60,9 +58,13 @@ func main() {
 	}
 	tpl = t
 
+	// dynamic content
 	http.HandleFunc("/", handleIndex)
 	http.HandleFunc("/post", handlePost)
+
+	// static file server
 	fs := http.FileServer(http.Dir("static"))
 	http.Handle("/static/", http.StripPrefix("/static/", fs))
+
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
