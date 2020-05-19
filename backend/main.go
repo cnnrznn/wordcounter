@@ -2,14 +2,21 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"net/url"
+	"os"
 	"time"
 
 	. "github.com/cnnrznn/wordcounter/util"
 )
+
+func main() {
+	http.HandleFunc("/wordcount", handle)
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", os.Getenv("PORT")), nil))
+}
 
 func handle(w http.ResponseWriter, req *http.Request) {
 	// get url from query string
@@ -49,9 +56,4 @@ func handle(w http.ResponseWriter, req *http.Request) {
 		URL:       URL.String(),
 	}
 	json.NewEncoder(w).Encode(wcr)
-}
-
-func main() {
-	http.HandleFunc("/wordcount", handle)
-	log.Fatal(http.ListenAndServe(":8081", nil))
 }
