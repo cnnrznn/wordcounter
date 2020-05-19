@@ -12,11 +12,10 @@ import (
 )
 
 func handle(w http.ResponseWriter, req *http.Request) {
-	log.Println(req.URL.Path)
-
 	// get url from query string
 	URL, err := url.Parse(req.URL.Query().Get("url"))
 	if err != nil {
+		log.Println(err)
 		http.Error(w, "Invalid url string", http.StatusBadRequest)
 		return
 	}
@@ -24,6 +23,7 @@ func handle(w http.ResponseWriter, req *http.Request) {
 	// download url contents
 	resp, err := http.Get(URL.String())
 	if err != nil {
+		log.Println(err)
 		http.Error(w, "Unable to fetch URL", http.StatusInternalServerError)
 		return
 	}
@@ -32,7 +32,9 @@ func handle(w http.ResponseWriter, req *http.Request) {
 	// execute wordcount
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
+		log.Println(err)
 		http.Error(w, "Unable to read URL response", http.StatusInternalServerError)
+		return
 	}
 
 	start := time.Now()
@@ -41,14 +43,15 @@ func handle(w http.ResponseWriter, req *http.Request) {
 
 	// write json responsea
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(WCResponse{
+	wcr := WCResponse{
 		Wordcount: counts,
 		Time:      elapsed.Seconds(),
 		URL:       URL.String(),
-	})
+	}
+	json.NewEncoder(w).Encode(wcr)
 }
 
 func main() {
 	http.HandleFunc("/wordcount", handle)
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	log.Fatal(http.ListenAndServe(":8081", nil))
 }
