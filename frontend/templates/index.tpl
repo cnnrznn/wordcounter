@@ -35,17 +35,17 @@
             <button type="submit" class="btn btn-primary mb-2">Compute wordcount</button>
         </form>
 
-        {{ if .wordcount }}
+        {{ if .Wordcount }}
             <div class="card my-3 col-12">
                 <div class="card-body">
-                    <h5 class="card-title">{{ .url }}</h5>
-                    <h6 class="card-subtitle mb-2 text-muted">Computed in {{ .time }} seconds</h6>
+                    <h5 class="card-title">{{ .URL }}</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">Computed in {{ .Time }} seconds</h6>
                     <br>
-                    {{ range .wordcount }}
-                    <p class="card-text">
-                        {{ .item }}
-                    </p>
+                    <div class="card-text">
+                    {{ range .Wordcount }}
+                        {{ .Key }}, {{ .Val }}
                     {{ end }}
+                    </div>
                 </div>
             </div>
         {{ else }}
