@@ -41,11 +41,11 @@
                     <h5 class="card-title">{{ .URL }}</h5>
                     <h6 class="card-subtitle mb-2 text-muted">Computed in {{ .Time }} seconds</h6>
                     <br>
-                    <div class="card-text">
                     {{ range .Wordcount }}
+                    <p class="card-text">
                         {{ .Key }}, {{ .Val }}
+                    </p>
                     {{ end }}
-                    </div>
                 </div>
             </div>
         {{ else }}
