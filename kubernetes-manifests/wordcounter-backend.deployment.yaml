@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wordcounter-backend
+  labels:
+    app: wordcounter
+    tier: backend
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: wordcounter
+      tier: backend
+  template:
+    metadata:
+      labels:
+        app: wordcounter
+        tier: backend
+    spec:
+      containers:
+      - name: backend
+        image: wordcounter-backend
+        ports:
+        - name: http-server
+          containerPort: 8080
+        env:
+        - name: PORT
+          value: "8080"
